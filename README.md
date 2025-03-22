@@ -33,7 +33,7 @@ A simple text-based **Hangman** game in Python! This version of Hangman randomly
 
 ### 1. Clone the repository:  
   ```sh
-  git clone https://github.com/yourusername/Hangman-Game.git
+  git clone https://github.com/B-Hensley/Hangman-Game.git
   ```
 ### 2. Navigate to the project directory:
   ```sh
