@@ -9,28 +9,7 @@ hangman_stages.reverse()
 CHOICES = ['y', 'n']
 LETTERS = list(string.ascii_lowercase)
 
-# Select a random word from the list and initialize variables.
-word = random.choice(animals).lower()
-
-# Starts the game by asking player to choose if they would like to play or not. If yes, prompt player to guess letter.
-def start():
-    start_game = False
-    choice = ''
-    while choice.lower() not in CHOICES:
-        choice = input("Do you want to play Hangman? The subject is animals. (y/n):  ")
-        if choice.lower() == 'y':
-            start_game = True
-            return start_game
-        
-        elif choice.lower() == 'n':
-            start_game = False
-            print("Maybe later!")
-            return start_game
-        
-        else:
-            start_game = False
-            print("Please enter y or n!")
-            return start_game
+replay = False
 
 # This function gathers the users letter guess/choice for the game and validates that it's a letter.
 def player_guess(correct_guesses, incorrect_guesses):
@@ -45,37 +24,56 @@ def player_guess(correct_guesses, incorrect_guesses):
             if guess in LETTERS and len(guess) == 1:
                 return guess
             print("Please enter a single letter.")
-
-# This function allows the player to play again, or to choose not to play again and ends the program.
-def run_again():
-    choice = ''
-    while choice.lower() not in CHOICES:
-        choice = input("Do you want to play Hangman again? The subject is animals. (y/n):  ")
-        if choice.lower() == 'y':
-            return True
-        
-        elif choice.lower() == 'n':
-            print("Maybe later!")
-            return False
-        
-        else:
-            print("Please enter y or n!")
-
-
-# Runs the game
-def run_game(start_game):
     
-    # Select a random word from the list and initialize variables.
+def start_game():
+    start = ''
+    
+    # Checks if the start input is a yes or no and repeats question if not.
+    while start not in CHOICES:
+        start = input("Do you want to play Hangman? The category is animals. (y/n): ").lower()
+        
+        if start == 'y':
+            return True
+        elif start == 'n':
+            return False
+        else:
+            print("Please enter a y or n.\n")
+            
+def play_again():
+    again = ''
+    
+    # Checks if the again input is a yes or no and repeats question if not.
+    while again not in CHOICES:
+        again = input('Would you like to play again? (y/n): ')
+        
+        if again == 'y':
+            return True
+        elif again == 'n':
+            return False
+        else:
+            print("Please enter a y or n.\n")
+            
+            
+def run_game():
+    global replay
+    
+    # Create new word each time run_game is called.
     word = random.choice(animals).lower()
-
+    attempts = 6
+    
+    # Stores the correct and incorrect guesses
     correct_letters = []
     incorrect_letters = []
-    attempts = 6
-
-    while start_game:
+    
+    if replay == False:
+        start = start_game()
+    else:
+        start = True
+    
+    while start:
+        replay = False
         
-        print(f'Attempts left: {attempts}')
-        
+        print(f"Attempts Left: {attempts}")
         print(hangman_stages[attempts])
         
         display_word = ''
@@ -89,33 +87,31 @@ def run_game(start_game):
                 
         print(display_word)
         
-        # Checks to see if there are any remaining spaces to guess for.
-        if '_' not in display_word:
-            print("You Win!")
-            restart_game = run_again()
-            if restart_game:
-                run_game(start_game)
-            else:
-                print("Thanks for playing!")
-                break
-        
-        # Checks attempts to determine if attempts have all been used, if attempts is 0 and there are still "_", then player loses.
+        # Logic to check if the player lost:
         if attempts == 0:
-            print(f"You lose! The word was {word}.")    
-            restart_game = run_again()
-            if restart_game:
-                run_game(start_game)
+            print(f"\nYou Lose! The word was: {word}")
+            replay = play_again()
+            if replay:
+                run_game()
             else:
-                print("Thanks for playing!")
-                break        
-        # Keeps a list of correct and incorrect letters guessed by player; used to tell player if they have already guessed a letter.
+                print('Thanks for playing my game! Check out my GitHub for more projects!')
+                quit()
+        
+        if '_' not in display_word:
+            print("You Won!")
+            replay = play_again()
+            if replay:
+                run_game()
+            else:
+                print('Thanks for playing my game! Check out my GitHub for more projects!')
+                quit()
+        
         guess = player_guess(correct_letters, incorrect_letters)
         if guess in word:
             correct_letters.append(guess)
         else:
             incorrect_letters.append(guess)
             attempts -= 1
-            
+    
 
-start_game = start()
-run_game(start_game)
+run_game()
